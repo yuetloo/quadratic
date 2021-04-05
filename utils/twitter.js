@@ -1,5 +1,7 @@
 const createError = require('http-errors');
 const TwitterLite = require('twitter-lite')
+//const { TwitterClient } = require('twitter-api-client');
+
 require('dotenv').config()
 
 const handleError = (e) => {
@@ -23,13 +25,24 @@ class Twitter {
       version: "2",
       extension: false,
       bearer_token: process.env.TWITTER_TOKEN
-    })
+    });
+
     this.clientV1 = new TwitterLite({
       version: "1.1",
-      bearer_token: process.env.TWITTER_TOKEN,
-      consumer_key: process.env.TWITTER_KEY,
+      access_token_key: process.env.TWITTER_ACCESS_TOKEN,
+      access_token_secret: process.env.TWITTER_ACCESS_SECRET,
+      consumer_key: process.env.TWITTER_API_KEY,
       consumer_secret: process.env.TWITTER_SECRET
-    })
+    });
+
+/*
+    this.clientV3 = new TwitterClient({
+      apiKey: process.env.TWITTER_API_KEY,
+      apiSecret: process.env.TWITTER_SECRET,
+      accessToken: process.env.TWITTER_ACCESS_TOKEN,
+      accessTokenSecret: process.env.TWITTER_ACCESS_SECRET
+    });
+*/
   }
 
   async getUsers(usernames, extraFields) {
@@ -49,13 +62,27 @@ class Twitter {
 
   async searchUsers(username) {
     try {
-      return [];
+      const url = 'users/search'
+      const response = await this.clientV1.get(url, { q: username });
+      return response.map(u => u.screen_name);
 
     } catch (e) {
       handleError(e);
     }
   }
 
+/*
+  async searchUsers(username) {
+    try {
+      const data = await this.clientV3.accountsAndUsers.usersSearch({ q: username });
+      //console.log('search', data);
+      return data.map(u =>  u.screen_name);
+
+    } catch (e) {
+      handleError(e);
+    }
+  }
+*/
 }
 
 module.exports = new Twitter();
