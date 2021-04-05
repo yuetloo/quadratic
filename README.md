@@ -1,1 +1,1 @@
-# quadratic
+# Quadratic Diplomacy Game
