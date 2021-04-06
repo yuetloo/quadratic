@@ -1,4 +1,4 @@
-# Quadratic Diplomacy Game
+# Twitter API
 
 live demo:
 https://blooming-earth-14186.herokuapp.com
