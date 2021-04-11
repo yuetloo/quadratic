@@ -1,6 +1,5 @@
 const createError = require('http-errors');
 const TwitterLite = require('twitter-lite')
-//const { TwitterClient } = require('twitter-api-client');
 
 require('dotenv').config()
 
@@ -19,6 +18,12 @@ const handleError = (e) => {
   throw new createError(500, e.message);
 }
 
+const getTwitterClient = () => (new TwitterLite({
+  version: "1.1",
+  consumer_key: process.env.TWITTER_API_KEY,
+  consumer_secret: process.env.TWITTER_SECRET
+}))
+
 class Twitter {
   constructor() {
     this.client = new TwitterLite({
@@ -34,15 +39,6 @@ class Twitter {
       consumer_key: process.env.TWITTER_API_KEY,
       consumer_secret: process.env.TWITTER_SECRET
     });
-
-/*
-    this.clientV3 = new TwitterClient({
-      apiKey: process.env.TWITTER_API_KEY,
-      apiSecret: process.env.TWITTER_SECRET,
-      accessToken: process.env.TWITTER_ACCESS_TOKEN,
-      accessTokenSecret: process.env.TWITTER_ACCESS_SECRET
-    });
-*/
   }
 
   async getUsers(usernames, extraFields) {
@@ -71,18 +67,32 @@ class Twitter {
     }
   }
 
-/*
-  async searchUsers(username) {
+  async getRequestToken() {
+    let token;
     try {
-      const data = await this.clientV3.accountsAndUsers.usersSearch({ q: username });
-      //console.log('search', data);
-      return data.map(u =>  u.screen_name);
-
+      token = await getTwitterClient().getRequestToken(process.env.TWITTER_CALLBACK_URL)
     } catch (e) {
       handleError(e);
     }
+
+    if( !token.oauth_callback_confirmed ) {
+      throw new createError(401, 'OAuth error');
+    }
+
+    return token;
   }
-*/
+
+  async getAccessToken({oauthVerifier, oauthToken}) {
+
+    const token = await getTwitterClient().getAccessToken({
+      oauth_verifier: oauthVerifier,
+      oauth_token: oauthToken
+    })
+
+    console.log('token===>', token)
+    return token;
+  }
+
 }
 
 module.exports = new Twitter();

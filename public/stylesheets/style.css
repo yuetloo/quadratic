@@ -10,3 +10,7 @@ a {
 .center {
   text-align: center;
 }
+
+#login-button:hover {
+  cursor: pointer;
+}
