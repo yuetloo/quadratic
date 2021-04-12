@@ -83,13 +83,12 @@ class Twitter {
   }
 
   async getAccessToken({oauthVerifier, oauthToken}) {
-
+  
     const token = await getTwitterClient().getAccessToken({
       oauth_verifier: oauthVerifier,
       oauth_token: oauthToken
     })
 
-    console.log('token===>', token)
     return token;
   }
 

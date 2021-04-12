@@ -16,10 +16,14 @@ router.get('/', async (req, res, next) => {
 });
 
 router.get('/callback', async (req, res, next) => {
-  const { oauthVerifier, oauthToken } = req.query;
+  const { oauth_verifier, oauth_token } = req.query;
 
   try {
-    const token = await twitter.getAccessToken({ oauthVerifier, oauthToken })
+    const token = await twitter.getAccessToken({
+      oauthVerifier: oauth_verifier,
+      oauthToken: oauth_token
+    })
+    console.log('=====EEE>', token)
     res.json({ username: token.user_id, screenName: token.screenName })
 
   } catch (err) {
