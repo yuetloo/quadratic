@@ -23,8 +23,7 @@ router.get('/callback', async (req, res, next) => {
       oauthVerifier: oauth_verifier,
       oauthToken: oauth_token
     })
-    console.log('=====EEE>', token)
-    res.json({ username: token.user_id, screenName: token.screenName })
+    res.json({ username: token.user_id, screenName: token.screen_name })
 
   } catch (err) {
     console.log('callback error', err)  
