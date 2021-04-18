@@ -3,6 +3,8 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+// do not log query string
+logger.token('url', (req, res) => req._parsedUrl.pathname)
 
 const { verify: verifySession } = require('./middleware/session');
 const db = require('./db');
