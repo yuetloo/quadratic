@@ -1,7 +1,7 @@
 # Twitter API
 
 live demo:
-https://blooming-earth-14186.herokuapp.com
+https://quadratic-trust.herokuapp.com/
 
 
 # API
@@ -21,15 +21,18 @@ https://blooming-earth-14186.herokuapp.com
         - Enable 3-legged OAuth
 
 2. postgres
-        https://devcenter.heroku.com/articles/heroku-postgresql#provisioning-heroku-postgres
-        ```
-        heroku addons:create heroku-postgresql:hobby-dev
-        ```
+    1. how to provision postgres on heroku:
+      - https://devcenter.heroku.com/articles/heroku-postgresql#provisioning-heroku-postgres
 
-        - to get postgres url from heroku
-        ```
-        heroku pg:credentials:url DATABASE --app <appname>
-        ```
+      ```
+      heroku addons:create heroku-postgresql:hobby-dev
+      ```
+
+      - to get postgres url from heroku
+
+      ```
+      heroku pg:credentials:url DATABASE --app <appname>
+      ```
 
 2. heroku
     1. follow the heroku instruction to download heroku cli
