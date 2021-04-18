@@ -7,7 +7,7 @@ class Crypto {
     this.key = randomBytes(16)
   }
 
-  async encrypt( tokenKey, tokenSecret ) {
+  encrypt( tokenKey, tokenSecret ) {
     const token = { tokenKey, tokenSecret }
     const tokenString = JSON.stringify(token)
     const dataBytes = aesjs.utils.utf8.toBytes(tokenString);
@@ -24,7 +24,7 @@ class Crypto {
     return { counter: hash, data: encryptedHex }
   }
 
-  async decrypt( counter, data ) {
+  decrypt( counter, data ) {
       const counterBytes = aesjs.utils.hex.toBytes(counter)
       const aesCtr = new aesjs.ModeOfOperation.ctr(this.key, new aesjs.Counter(counterBytes));
 

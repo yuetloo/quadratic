@@ -9,10 +9,10 @@ module.exports = {
     }
     next();    
   },
-  verify( req, res, next ) {
+  async verify( req, res, next ) {
     if (req.session && req.session.auth) {
       const { counter, data } = req.session.auth
-      const token = crypto.descrypt(counter, data)
+      const token = crypto.decrypt(counter, data)
       req.auth = token
     }
     next();
