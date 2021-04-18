@@ -4,7 +4,6 @@
   id="login-button"
   href="/login"
 >
-
   <img src="https://cdn.cms-twdigitalassets.com/content/dam/developer-twitter/auth-docs/sign-in-with-twitter-gray.png.twimg.1920.png"/>
 </a>
 <ul>
@@ -12,3 +11,9 @@
   <li><a href="/users/jack">/users/:username</a> (i.e. /users/jack)</li>
   <li><a href="/search/yuet">/search/:username</a></li>
 </ul>
+
+<form action="/tweet" method="post">
+  <label for="message">Tweet message:</label>
+  <input type="text" id="message" name="message">
+  <input type="submit">
+</form>

@@ -92,6 +92,38 @@ class Twitter {
     return token;
   }
 
+  async verifyCredentials({ tokenKey, tokenSecret }) {
+
+    const invalidCredentials = !tokenKey || !tokenSecret;
+    if( invalidCredentials ) return null;
+
+    const client = new Twitter({
+      consumer_key: process.env.TWITTER_API_KEY,
+      consumer_secret: process.env.TWITTER_SECRET,
+      access_token_key: tokenKey,
+      access_token_secret: tokenSecret
+    });
+
+    const result = await client.get("account/verify_credentials");
+    console.log('result', result);
+    return result;
+  }
+
+  async postTweet({ tokenKey, tokenSecret, status }) {
+    const client = new Twitter({
+      consumer_key: process.env.TWITTER_API_KEY,
+      consumer_secret: process.env.TWITTER_SECRET,
+      access_token_key: tokenKey,
+      access_token_secret: tokenSecret
+    });
+
+    const tweet = await client.post("statuses/update", {
+      status: status,
+      in_reply_to_status_id: '',
+      auto_populate_reply_metadata: true
+    });
+    console.log('postTweet', tweet)
+  }
 }
 
 module.exports = new Twitter();

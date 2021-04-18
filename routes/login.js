@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const twitter = require('../utils/twitter')
+const sessionMiddleware = require('../middleware/session')
 
 /* login */
 router.get('/', async (req, res, next) => {
@@ -16,14 +17,23 @@ router.get('/', async (req, res, next) => {
 });
 
 router.get('/callback', async (req, res, next) => {
-  const { oauth_verifier, oauth_token } = req.query;
+  const { 
+    oauth_verifier: oauthVerifier,
+    oauth_token: oauthToken 
+  } = req.query;
 
   try {
     const token = await twitter.getAccessToken({
-      oauthVerifier: oauth_verifier,
-      oauthToken: oauth_token
+      oauthVerifier,
+      oauthToken
     })
-    res.json({ username: token.user_id, screenName: token.screen_name })
+
+    const username = token.screen_name;
+    const oauthSecret = token.oauth_token_secret;
+
+    const auth = sessionMiddleware.encrypt(oauthToken, oauthSecret)
+    req.session.auth = auth;
+    res.json({ username })
 
   } catch (err) {
     console.log('callback error', err)  
