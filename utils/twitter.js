@@ -102,7 +102,7 @@ class Twitter {
 
   async getAccessToken({oauthVerifier, oauthToken}) {
 
-    const client = new createClient()
+    const client = createClient()
 
     const token = await client.getAccessToken({
       oauth_verifier: oauthVerifier,
