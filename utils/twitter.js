@@ -87,7 +87,6 @@ class Twitter {
     try {
       const client = createClient()
       const callbackUrl = process.env.TWITTER_CALLBACK_URL
-      console.log('callback', callbackUrl)
       token = await client.getRequestToken(callbackUrl)
     } catch (e) {
       handleError(e);
@@ -112,19 +111,17 @@ class Twitter {
     return token;
   }
 
-  async verifyCredentials({ accessTokenKey, accessTokenSecret }) {
+  async verifyCredentials() {
 
-    const invalidCredentials = !tokenKey || !tokenSecret;
-    if( invalidCredentials ) throw new Error('missing access token key or secret');
-
-    const client = createClient({
-      accessTokenKey,
-      accessTokenSecret
-    })
-
-    const result = await client.get("account/verify_credentials");
-    console.log('result', result);
-    return result;
+    if (!this.user) throw new Error('User not authenticated')
+    const result = await this.user.get("account/verify_credentials");
+    return {
+      name: result.name,
+      username: result.screen_name,
+      description: result.description,
+      followersCount: result.followers_count,
+      profileImage: result.profile_image_url_https
+    };
   }
 
   async postTweet(status) {
@@ -134,7 +131,8 @@ class Twitter {
     try {
       const tweet = await this.user.post("statuses/update", {
         status: status
-      }) 
+      })
+      return tweet.id
     } catch (e) {
       console.log('error tweeting', e);
       handleError(e);
