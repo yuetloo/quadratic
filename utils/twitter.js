@@ -116,6 +116,7 @@ class Twitter {
       access_token_key: tokenKey,
       access_token_secret: tokenSecret
     });
+    console.log('post tweet', tokenKey, tokenSecret, client)
 
     const tweet = await client.post("statuses/update", {
       status: status,
