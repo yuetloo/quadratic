@@ -20,7 +20,7 @@ router.post('/', requireLogin, async (req, res, next) => {
     console.log('result', tweet)
     res.send({ success: true })
   } catch (e) {
-    next(e)
+    next({message: e.message})
   }
 })
 
