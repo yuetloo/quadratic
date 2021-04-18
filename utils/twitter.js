@@ -131,10 +131,14 @@ class Twitter {
 
     if (!this.user) throw new Error('User not authenticated')
 
-    const tweet = await this.user.post("statuses/update", {
-      status: status
-    });
-    console.log('postTweet', tweet)
+    try {
+      const tweet = await this.user.post("statuses/update", {
+        status: status
+      }) 
+    } catch (e) {
+      console.log('error tweeting', e);
+      handleError(e);
+    }
   }
 }
 

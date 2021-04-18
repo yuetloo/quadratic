@@ -22,7 +22,7 @@ router.post('/', requireLogin, async (req, res, next) => {
     res.send({ success: true })
   } catch (e) {
     console.log('tweet error', e)
-    next({message: e.message})
+    next(e)
   }
 })
 
