@@ -2,16 +2,21 @@
 
 const express = require('express');
 const router = express.Router();
-const twitter = require('../utils/twitter')
+const Twitter = require('../utils/twitter')
 const { requireLogin } = require('../middleware/session')
 
 // tweet
 router.post('/', requireLogin, async (req, res, next) => {
-  const { tokenKey, tokenSecret } = req.auth
-  const status = req.body.message || 'hello world!!'
+  const {
+    tokenKey: accessTokenKey,
+    tokenSecret: accessTokenSecret
+  } = req.auth
+
+  const status = req.body.message
 
   try {
-    const tweet = await twitter.postTweet({ tokenKey, tokenSecret, status })
+    const twitter = new Twitter({ accessTokenKey, accessTokenSecret })
+    const tweet = await twitter.postTweet(status)
     console.log('result', tweet)
     res.send({ success: true })
   } catch (e) {

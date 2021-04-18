@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const twitter = require('../utils/twitter')
+const Twitter = require('../utils/twitter')
 
 const leaders = {
   'Anne_Connelly': 10,
@@ -30,6 +30,7 @@ router.get('/', async (req, res, next) => {
 
   const usernames = Object.keys(leaders).join(',')
   try {
+    const twitter = new Twitter()
     const users  = await twitter.getUsers(usernames, "profile_image_url");
     const usersWithVotes = addVoteToUsers(users);
     res.send({ data: usersWithVotes });  
@@ -42,6 +43,7 @@ router.get('/:username', async (req, res, next) => {
   const { username } = req.params;
   try {
     let data = {};
+    const twitter = new Twitter()
     const users  = await twitter.getUsers(username, "name,location,profile_image_url,description");
     if( users.length > 0 )
     {

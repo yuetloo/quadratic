@@ -10,7 +10,7 @@ const handleError = (e) => {
     {
       // rate limit exceeded
       throw new createError(429, "Rate limit will reset on", new Date(e._headers.get("x-rate-limit-reset") * 1000));
-    } 
+    }
     else {
       throw new createError(400, e.errors[0].message);
     }
@@ -18,33 +18,44 @@ const handleError = (e) => {
   throw new createError(500, e.message);
 }
 
-const getTwitterClient = () => (new TwitterLite({
-  version: "1.1",
-  consumer_key: process.env.TWITTER_API_KEY,
-  consumer_secret: process.env.TWITTER_SECRET
+const createClient = ({
+  bearerToken,
+  accessTokenKey,
+  accessTokenSecret
+} = {}) => (
+  bearerToken?
+  new TwitterLite({
+    version: "2",
+    extension: false,
+    bearer_token: bearerToken
+  }) :
+  new TwitterLite({
+  consumer_key: process.env.TWITTER_CONSUMER_KEY,
+  consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+  access_token_key: accessTokenKey,
+  access_token_secret: accessTokenSecret
 }))
 
 class Twitter {
-  constructor() {
-    this.client = new TwitterLite({
-      version: "2",
-      extension: false,
-      bearer_token: process.env.TWITTER_TOKEN
-    });
-
-    this.clientV1 = new TwitterLite({
-      version: "1.1",
-      access_token_key: process.env.TWITTER_ACCESS_TOKEN,
-      access_token_secret: process.env.TWITTER_ACCESS_SECRET,
-      consumer_key: process.env.TWITTER_API_KEY,
-      consumer_secret: process.env.TWITTER_SECRET
-    });
+  constructor({accessTokenKey, accessTokenSecret} = {}) {
+    // this is used for posting tweets
+    if( accessTokenKey && accessTokenSecret) {
+      this.user = new TwitterLite({
+        consumer_key: process.env.TWITTER_CONSUMER_KEY,
+        consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+        access_token_key: accessTokenKey,
+        access_token_secret: accessTokenSecret
+      })
+    }
   }
 
   async getUsers(usernames, extraFields) {
     try {
+      const client = createClient({
+        bearerToken: process.env.TWITTER_BEARER_TOKEN
+      })
       const url = 'users/by';
-      const response = await this.client.get(url, {
+      const response = await client.get(url, {
         usernames,
         "user.fields": extraFields
       });
@@ -58,8 +69,12 @@ class Twitter {
 
   async searchUsers(username) {
     try {
+      const client = createClient({
+        accessTokenKey: process.env.TWITTER_ACCESS_TOKEN_KEY,
+        accessTokenSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET
+      })
       const url = 'users/search'
-      const response = await this.clientV1.get(url, { q: username });
+      const response = await client.get(url, { q: username });
       return response.map(u => u.screen_name);
 
     } catch (e) {
@@ -70,7 +85,10 @@ class Twitter {
   async getRequestToken() {
     let token;
     try {
-      token = await getTwitterClient().getRequestToken(process.env.TWITTER_CALLBACK_URL)
+      const client = createClient()
+      const callbackUrl = process.env.TWITTER_CALLBACK_URL
+      console.log('callback', callbackUrl)
+      token = await client.getRequestToken(callbackUrl)
     } catch (e) {
       handleError(e);
     }
@@ -83,8 +101,10 @@ class Twitter {
   }
 
   async getAccessToken({oauthVerifier, oauthToken}) {
-  
-    const token = await getTwitterClient().getAccessToken({
+
+    const client = new createClient()
+
+    const token = await client.getAccessToken({
       oauth_verifier: oauthVerifier,
       oauth_token: oauthToken
     })
@@ -92,39 +112,30 @@ class Twitter {
     return token;
   }
 
-  async verifyCredentials({ tokenKey, tokenSecret }) {
+  async verifyCredentials({ accessTokenKey, accessTokenSecret }) {
 
     const invalidCredentials = !tokenKey || !tokenSecret;
-    if( invalidCredentials ) return null;
+    if( invalidCredentials ) throw new Error('missing access token key or secret');
 
-    const client = new Twitter({
-      consumer_key: process.env.TWITTER_API_KEY,
-      consumer_secret: process.env.TWITTER_SECRET,
-      access_token_key: tokenKey,
-      access_token_secret: tokenSecret
-    });
+    const client = createClient({
+      accessTokenKey,
+      accessTokenSecret
+    })
 
     const result = await client.get("account/verify_credentials");
     console.log('result', result);
     return result;
   }
 
-  async postTweet({ tokenKey, tokenSecret, status }) {
-    const client = new Twitter({
-      consumer_key: process.env.TWITTER_API_KEY,
-      consumer_secret: process.env.TWITTER_SECRET,
-      access_token_key: tokenKey,
-      access_token_secret: tokenSecret
-    });
-    console.log('post tweet', tokenKey, tokenSecret, client)
+  async postTweet(status) {
 
-    const tweet = await client.post("statuses/update", {
-      status: status,
-      in_reply_to_status_id: '',
-      auto_populate_reply_metadata: true
+    if (!this.user) throw new Error('User not authenticated')
+
+    const tweet = await this.user.post("statuses/update", {
+      status: status
     });
     console.log('postTweet', tweet)
   }
 }
 
-module.exports = new Twitter();
+module.exports = Twitter;

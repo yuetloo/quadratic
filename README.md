@@ -12,18 +12,23 @@ https://blooming-earth-14186.herokuapp.com
 3. /search/:str
     - for autocomplete search
 
-
-
 # Setup
 1. twitter
     1. create a developer account at https://developer.twitter.com
-    2. setup oauth callback url, keys and tokens under `Projects & Apps`:
+    2. setup keys and tokens under `Projects & Apps`:
         https://developer.twitter.com/en/portal/dashboard
+    3. setup oauth callback url in settings
+        - Enable 3-legged OAuth
 
 2. postgres
         https://devcenter.heroku.com/articles/heroku-postgresql#provisioning-heroku-postgres
         ```
         heroku addons:create heroku-postgresql:hobby-dev
+        ```
+
+        - to get postgres url from heroku
+        ```
+        heroku pg:credentials:url DATABASE --app <appname>
         ```
 
 2. heroku
@@ -37,7 +42,13 @@ https://blooming-earth-14186.herokuapp.com
     2. setup config
         - go to https://dashboard.heroku.com app settings
         - click the `Reveal Config Vars` to setup these environment variables
-            - DATABASE_URL          - postgres database url
-            - TWITTER_API_KEY       - consumer keys
-            - TWITTER_SECRET        - consumer secret
-            - TWITTER_TOKEN         - Bearer Token
+            - DATABASE_URL                - postgres database url
+            - TWITTER_CONSUMER_KEY        - consumer keys
+            - TWITTER_CONSUMER_SECRET     - consumer secret
+            - TWITTER_BEARER_TOKEN        - Bearer Token
+            - TWITTER_ACCESS_TOKEN_KEY    - access token key
+            - TWITTER_ACCESS_TOKEN_SECRET - access token secret
+
+# Troubleshooting
+1. Twitter callback url not setup
+    - error: Desktop applications only support the oauth_callback value 'oob'/oauth/request_token

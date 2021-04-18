@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const twitter = require('../utils/twitter')
+const Twitter = require('../utils/twitter')
 const crypto = require('../utils/crypto')
 
 /* login */
 router.get('/', async (req, res, next) => {
 
   try {
+    const twitter = new Twitter()
     const {oauth_token} = await twitter.getRequestToken()
     res.redirect(`https://api.twitter.com/oauth/authenticate?oauth_token=${oauth_token}`)
   }
@@ -23,6 +24,9 @@ router.get('/callback', async (req, res, next) => {
   } = req.query;
 
   try {
+    if( !oauthVerifier || !oauthToken ) throw new Error('Missing oauth token')
+
+    const twitter = new Twitter()
     const token = await twitter.getAccessToken({
       oauthVerifier,
       oauthToken
