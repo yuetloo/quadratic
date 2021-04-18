@@ -33,10 +33,9 @@ router.get('/callback', async (req, res, next) => {
     })
 
     const username = token.screen_name;
-    const oauthSecret = token.oauth_token_secret;
-    console.log('token from getAccessToken', token)
+    console.log('token from getAccessToken', oauthToken, token)
 
-    const auth = crypto.encrypt(oauthToken, oauthSecret)
+    const auth = crypto.encrypt(token.oauth_token, token.oauth_token_secret)
     req.session.auth = auth;
     res.json({ username })
 
