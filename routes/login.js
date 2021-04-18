@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const twitter = require('../utils/twitter')
-const sessionMiddleware = require('../middleware/session')
+const crypto = require('../utils/crypto')
 
 /* login */
 router.get('/', async (req, res, next) => {
@@ -31,13 +31,13 @@ router.get('/callback', async (req, res, next) => {
     const username = token.screen_name;
     const oauthSecret = token.oauth_token_secret;
 
-    const auth = sessionMiddleware.encrypt(oauthToken, oauthSecret)
+    const auth = crypto.encrypt(oauthToken, oauthSecret)
     req.session.auth = auth;
     res.json({ username })
 
   } catch (err) {
     console.log('callback error', err)  
-    next({status: 401, message: err})
+    next({status: 401, message: err.message})
   }
 })
 
