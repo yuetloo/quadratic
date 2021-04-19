@@ -49,12 +49,13 @@ class Twitter {
     }
   }
 
-  async getUsers(usernames, extraFields) {
+  async getUsers(userList, extraFields) {
     try {
       const client = createClient({
         bearerToken: process.env.TWITTER_BEARER_TOKEN
       })
       const url = 'users/by';
+      const usernames = userList.join(',')
       const response = await client.get(url, {
         usernames,
         "user.fields": extraFields
