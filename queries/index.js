@@ -24,5 +24,8 @@ module.exports = {
       order: ['rank']
     })
     return data.map(u => u.dataValues)
+  },
+  userCount: async () => {
+    return User.count()
   }
 }
