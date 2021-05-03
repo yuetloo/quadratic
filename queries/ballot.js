@@ -1,5 +1,5 @@
 'use strict'
-const { DataTypes, QueryTypes } = require('sequelize')
+const { DataTypes, QueryTypes, fn, col} = require('sequelize')
 const db = require('../db')
 
 require('../models/ballot')(db, DataTypes)
@@ -36,14 +36,21 @@ module.exports = {
 
     return result
   },
+  delete: (options) => {
+    return Ballot.destroy(options)
+  },
   save: ({voter, candidate, score, transaction}) => {
     return Ballot.create({voter, candidate, score}, { transaction })
   },
-  getCandidates: (voter, transaction) => {
-    return Ballot.aggregate('candidate', 'DISTINCT', {
+  getCandidates: async (voter, transaction) => {
+    const ballots = await Ballot.findAll({
+      attributes: [[fn('DISTINCT', col('candidate')), 'candidate']],
       where: { voter },
-      transaction
+      transaction,
+      raw: true
     })
+
+    return ballots? ballots.map(b => b.candidate) : []
   },
   sumScore: async (candidate, transaction) => {
     const score = await Ballot.sum('score', {
@@ -51,12 +58,5 @@ module.exports = {
       transaction
     })
     return score
-  },
-  getCreditsUsed: async (voter) => {
-    const ballots = await this.get({voter})
-    const credits = ballots
-                      .map(b => b.score * b.score)
-                      .reduce((res, credits) => res + credits, 0)
-    return credits
   }
 }

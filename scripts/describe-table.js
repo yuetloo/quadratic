@@ -1,6 +1,7 @@
 const db = require('../db')
 const User = require('../queries/user')
 const Ballot = require('../queries/ballot')
+const { QueryTypes } = require('sequelize')
 
 const queryInterface = db.getQueryInterface()
 
@@ -15,6 +16,12 @@ console.log('users', users)
 
 const ballots = await Ballot.get()
 console.log('ballots', ballots)
+
+const rawUsers = await queryInterface.sequelize.query(`select * from "Users" where username = 'yuetloo'`,
+ {
+     type: QueryTypes.SELECT
+ })
+console.log('rawUsers', rawUsers)
 }
 
 

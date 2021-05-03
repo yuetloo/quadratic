@@ -1,7 +1,7 @@
 'use strict'
 
 const Twitter = require('../utils/twitter')
-const { QueryTypes, DataTypes, Op } = require('sequelize')
+const { QueryTypes, DataTypes, Op, sequelize } = require('sequelize')
 const db = require('../db')
 
 require('../models/user')(db, DataTypes)
@@ -36,7 +36,6 @@ const updateUserScore = async (username, transaction ) => {
 
 const adjustCandidateScore = async ({ voter, transaction}) => {
   const candidates = await Ballot.getCandidates(voter, transaction)
-
   for (let candidate of candidates) {
     await updateUserScore(candidate, transaction)
   }
@@ -85,7 +84,7 @@ module.exports = {
     return users.filter(u => !optoutUsers.has(u.username))
   },
   castVote: async ({voter, candidate, score}) => {
-    const transaction = await db.sequelize.transaction();
+    const transaction = await db.queryInterface.sequelize.transaction();
     try {
       await Ballot.save({ voter, candidate, score, transaction })
       await updateUserScore(candidate, transaction)
@@ -97,32 +96,33 @@ module.exports = {
   setOptout: async (username) => {
     if(!username) return
 
-    const transaction = await db.sequelize.transaction();
+    const transaction = await db.queryInterface.sequelize.transaction();
     const now = new Date()
     const voter = username
 
     try {
-      await User.update({ optout: true, updatedat: now }, {
+      const res = await User.update({ optout: true, updatedAt: now }, {
         where: {
           username
         },
         transaction
       })
 
-      await Ballot.destroy({
+      await adjustCandidateScore({voter, transaction})
+
+      await Ballot.delete({
         where: {
           [Op.or]: {
             voter,
-            recipient: username
+            candidate: username
           }
         },
         transaction
       })
 
-      await adjustCandidateScore({voter, transaction})
-
       await transaction.commit();
     } catch (err) {
+      console.log('err', err)
       await transaction.rollback();
     }
   }
