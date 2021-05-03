@@ -7,15 +7,7 @@ const db = require('../db')
 require('../models/user')(db, DataTypes)
 const { User } = db.models
 const Ballot = require('./ballot')
-const { raw } = require('express')
 
-
-const attributes = [
-  "username",
-  "score",
-  "rank",
-  [db.literal('SUM(`Ballots`.score * `Ballots`.score'), 'creditsUsed']
-]
 
 const userQuery = ({limit = 10, offset = 0, userSearch}) => {
   const AndFilterUser = userSearch? "AND u.username ILIKE '%" + userSearch + "%'" : ''
@@ -57,7 +49,6 @@ module.exports = {
       type: QueryTypes.SELECT
     })
 
-    console.log('user', users)
     const twitter = new Twitter()
     return twitter.getUserProfiles(users)
   },
@@ -94,7 +85,7 @@ module.exports = {
     return users.filter(u => !optoutUsers.has(u.username))
   },
   castVote: async ({voter, candidate, score}) => {
-    const transaction = await sequelize.transaction();
+    const transaction = await db.sequelize.transaction();
     try {
       await Ballot.save({ voter, candidate, score, transaction })
       await updateUserScore(candidate, transaction)
@@ -106,7 +97,7 @@ module.exports = {
   setOptout: async (username) => {
     if(!username) return
 
-    const transaction = await sequelize.transaction();
+    const transaction = await db.sequelize.transaction();
     const now = new Date()
     const voter = username
 
