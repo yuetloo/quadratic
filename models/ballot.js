@@ -1,10 +1,8 @@
 'use strict';
-const {
-  Model,
-  DataTypes
-} = require('sequelize');
-module.exports = (sequelize) => {
-  class Vote extends Model {
+const { Model } = require('sequelize');
+
+module.exports = (sequelize, DataTypes) => {
+  class Ballot extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -12,21 +10,36 @@ module.exports = (sequelize) => {
      */
     static associate(models) {
       // define association here
+      models.Ballot.belongsTo(models.User)
     }
   };
-  Vote.init({
-    username: {
+  Ballot.init({
+    voter: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    votes: {
+    candidate: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      references: {
+        model: 'Users',
+        key: 'username'
+      }
+    },
+    score: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0
     },
-    votedBy: {
-      type: DataTypes.STRING,
+    credits: {
+      type: DataTypes.INTEGER,
       allowNull: false,
+      defaultValue: 0
+    },
+    valid: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -39,7 +52,8 @@ module.exports = (sequelize) => {
     }
   }, {
     sequelize,
-    modelName: 'Vote',
+    paranoid: true,
+    modelName: 'Ballot'
   });
-  return Vote;
+  return Ballot;
 };

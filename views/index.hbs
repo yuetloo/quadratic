@@ -8,12 +8,24 @@
 </a>
 <ul>
   <li><a href="/users">/users</a></li>
-  <li><a href="/users/jack">/users/:username</a> (i.e. /users/jack)</li>
   <li><a href="/search/yuet">/search/:username</a></li>
+  <li><a href="/ballots/?voter=ricmoo">/ballots?voter=:username</a> (i.e. /ballots?voter=ricmoo)</li>
 </ul>
 
 <form action="/tweet" method="post">
   <label for="message">Tweet message:</label>
   <input type="text" id="message" name="message">
+  <input type="submit">
+</form>
+
+<form action="/optout" method="post">
+  <label>Opt out?</label>
+  <input type="submit">
+</form>
+
+<form action="/ballots" method="post">
+  <label>Vote</label>
+  <input type="text" id="recipient" name="recipient" value="Loo27464703" placeholder="username">
+  <input type="number" id="score" name="score" value="1" placeholder="score">
   <input type="submit">
 </form>

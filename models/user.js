@@ -2,6 +2,7 @@
 const {
   Model
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -11,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      models.User.hasMany(models.Ballot)
     }
   };
 
@@ -20,16 +22,7 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       allowNull: false,
     },
-    rank: {
-      type: DataTypes.INTEGER,
-      allowNull: true
-    },
-    credits: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0
-    },
-    votes: {
+    score: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0
@@ -50,8 +43,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: 'User',
-    tableName: 'users'
+    modelName: 'User'
   });
 
   return User;

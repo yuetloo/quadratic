@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "migrate": "sequelize-cli db:migrate",
+    "migrate:undo": "sequelize-cli db:migrate:undo",
+    "seed": "sequelize-cli db:seed",
+    "seed:undo": "sequelize-cli db:seed:undo",
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www",
     "test": "jest"

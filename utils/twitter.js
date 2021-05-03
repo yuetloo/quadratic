@@ -3,6 +3,9 @@ const TwitterLite = require('twitter-lite')
 
 require('dotenv').config()
 
+const USER_PROFILE_FIELDS = 'name,profile_image_url,public_metrics'
+const MAX_USER_PROFILES = 100
+
 const handleError = (e) => {
   if ('errors' in e) {
     // Twitter API error
@@ -36,47 +39,84 @@ const createClient = ({
   access_token_secret: accessTokenSecret
 }))
 
+const calculateCredits = (total = 0, used = 0) => {
+  return total - used
+}
+
+const buildUserProfile = (users, details) => {
+  const lut = new Map()
+  details.forEach(item => {
+    lut.set(item.username, item)
+  })
+
+  const profiles = users.map(u => {
+    const extra = lut.get(u.username)
+    return {
+      username: u.username,
+      name: extra.name,
+      profileUrl: extra.profile_image_url,
+      rank: u.rank,
+      score: u.score,
+      credits: calculateCredits(extra.public_metrics.followers_count, u.creditsUsed)  
+    }
+  })
+  return profiles
+}
+
 class Twitter {
   constructor({accessTokenKey, accessTokenSecret} = {}) {
     // this is used for posting tweets
     if( accessTokenKey && accessTokenSecret) {
-      this.user = new TwitterLite({
-        consumer_key: process.env.TWITTER_CONSUMER_KEY,
-        consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-        access_token_key: accessTokenKey,
-        access_token_secret: accessTokenSecret
+      this.user = createClient({
+        accessTokenKey,
+        accessTokenSecret
       })
     }
   }
+  async getUserProfile(user) {
+    const profiles = await this.getUserProfiles([user])
+    return profiles[0]
+  }
+  async getUserProfiles(users) {
+    if( users.length > MAX_USER_PROFILES ){
+      throw new Error(`Too many users. Only supports ${MAX_USER_PROFILES}`)
+    }
 
-  async getUsers(userList, extraFields) {
+    if( users.length === 0 ) {
+      return users
+    }
+
     try {
       const client = createClient({
         bearerToken: process.env.TWITTER_BEARER_TOKEN
       })
       const url = 'users/by';
-      const usernames = userList.join(',')
+
+      const usernames = users.map(u => u.username).join(',')
       const response = await client.get(url, {
         usernames,
-        "user.fields": extraFields
+        "user.fields": USER_PROFILE_FIELDS
       });
 
-      return response.data;
+      return buildUserProfile(users, response.data);
 
     } catch (e) {
       handleError(e);
     }
   }
 
-  async searchUsers(username) {
+  async searchUsers(username, options = {}) {
+    const { count = 10, page = 0 } = options
     try {
       const client = createClient({
         accessTokenKey: process.env.TWITTER_ACCESS_TOKEN_KEY,
         accessTokenSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET
       })
       const url = 'users/search'
-      const response = await client.get(url, { q: username });
-      return response.map(u => u.screen_name);
+      const response = await client.get(url, { q: username, count, page });
+      const users = response.map(u => ({ username: u.screen_name }));
+      const profiles = await this.getUserProfiles(users)
+      return profiles
 
     } catch (e) {
       handleError(e);

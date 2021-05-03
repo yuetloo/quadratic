@@ -34,7 +34,11 @@ router.get('/callback', async (req, res, next) => {
 
     const username = token.screen_name;
 
-    const auth = crypto.encrypt(token.oauth_token, token.oauth_token_secret)
+    const auth = crypto.encrypt({
+      username,
+      tokenKey: token.oauth_token,
+      tokenSecret: token.oauth_token_secret
+    })
     req.session.auth = auth;
     res.json({ username })
 

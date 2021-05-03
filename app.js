@@ -23,6 +23,8 @@ const searchRouter = require('./routes/search');
 const loginRouter = require('./routes/login');
 const logoutRouter = require('./routes/logout')
 const tweetRouter = require('./routes/tweet')
+const ballotsRouter = require('./routes/ballots');
+const optoutRouter = require('./routes/optout')
 
 const app = express();
 
@@ -49,6 +51,8 @@ app.use('/search', searchRouter);
 app.use('/login', loginRouter);
 app.use('/logout', logoutRouter);
 app.use('/tweet', tweetRouter);
+app.use('/ballots', ballotsRouter)
+app.use('/optout', optoutRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

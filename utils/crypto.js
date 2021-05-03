@@ -7,8 +7,7 @@ class Crypto {
     this.key = randomBytes(16)
   }
 
-  encrypt( tokenKey, tokenSecret ) {
-    const token = { tokenKey, tokenSecret }
+  encrypt( token ) {
     const tokenString = JSON.stringify(token)
     const dataBytes = aesjs.utils.utf8.toBytes(tokenString);
 
