@@ -115,6 +115,10 @@ module.exports = {
   castVote: async ({voter, candidate, score}) => {
     const transaction = await db.queryInterface.sequelize.transaction();
     try {
+      await User.findOrCreate({
+        where: { username: candidate },
+        transaction
+      })
       await Ballot.save({ voter, candidate, score, transaction })
       const newScore = await updateUserScore(candidate, transaction)
       await transaction.commit();

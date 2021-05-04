@@ -15,7 +15,7 @@ test('castVote should work', async () => {
   await User.castVote({ voter: 'ricmoo', candidate, score})
   const users = await User.searchUsers(candidate)
   expect(users.length).toBe(1)
-  expect(users[0].score > 6).toBe(true)
+  expect(users[0].score >= 6).toBe(true)
 });
 
 
