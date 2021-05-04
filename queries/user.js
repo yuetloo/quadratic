@@ -16,7 +16,7 @@ const userQuery = ({limit = 10, offset = 0, userSearch, username}) => {
     SELECT u.username,
           u.score,
           (SELECT COUNT(1) + 1 FROM "Users" uu
-            WHERE uu.score > u.score) as rank,
+            WHERE uu.score > u.score and uu.optout = false) as rank,
           (SELECT SUM(b.score * b.score) FROM "Ballots" b
             WHERE b.voter = u.username) as "creditsUsed"
       FROM "Users" u
