@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Twitter = require('../utils/twitter')
 const crypto = require('../utils/crypto')
+const User = require('../queries/user')
 
 /* login */
 router.get('/', async (req, res, next) => {
@@ -39,6 +40,12 @@ router.get('/callback', async (req, res, next) => {
       tokenKey: token.oauth_token,
       tokenSecret: token.oauth_token_secret
     })
+
+    const isOptout = await User.isOptout(username)
+    if( isOptout ){
+      throw new Error('Not authorized')
+    }
+
     req.session.auth = auth;
     res.json({ username })
 

@@ -1,7 +1,7 @@
 'use strict'
 
 const Twitter = require('../utils/twitter')
-const { QueryTypes, DataTypes, Op, sequelize } = require('sequelize')
+const { QueryTypes, DataTypes, Op } = require('sequelize')
 const db = require('../db')
 
 require('../models/user')(db, DataTypes)
@@ -44,6 +44,18 @@ const adjustCandidateScore = async ({ voter, transaction}) => {
 }
 
 module.exports = {
+  isOptout: async (username = '') => {
+    const result = await User.findOne({
+      attributes: [ "optout" ],
+      where: {
+        optout: true,
+        username
+      },
+      raw: true
+    })
+
+    return Boolean(result)
+  },
   getUser: async (username = '') => {
     const users = await db.query(userQuery({username}),
     {

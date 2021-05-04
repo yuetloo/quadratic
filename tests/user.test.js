@@ -24,3 +24,8 @@ test('getUser should return twitter profile if user does not exist in table', as
   expect(user).toBeDefined
   expect(user.credits).toBeGreaterThan(0)
 })
+
+test('isOptout should work', async () => {
+  const isOptout = await User.isOptout('yuetloo')
+  expect(isOptout).toBe(true)
+})
