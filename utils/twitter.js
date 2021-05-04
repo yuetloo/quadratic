@@ -82,8 +82,8 @@ class Twitter {
       throw new Error(`Too many users. Only supports ${MAX_USER_PROFILES}`)
     }
 
-    if( users.length === 0 ) {
-      return users
+    if( !users || users.length === 0 ) {
+      return []
     }
 
     try {

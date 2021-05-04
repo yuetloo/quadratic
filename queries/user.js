@@ -9,8 +9,9 @@ const { User } = db.models
 const Ballot = require('./ballot')
 
 
-const userQuery = ({limit = 10, offset = 0, userSearch}) => {
-  const AndFilterUser = userSearch? "AND u.username ILIKE '%" + userSearch + "%'" : ''
+const userQuery = ({limit = 10, offset = 0, userSearch, username}) => {
+  const AndLikeUsername = userSearch? "AND u.username ILIKE '%" + userSearch + "%'" : ''
+  const AndEqualUsername = username? "AND u.username = :username" : ''
   return `
     SELECT u.username,
           u.score,
@@ -19,7 +20,7 @@ const userQuery = ({limit = 10, offset = 0, userSearch}) => {
           (SELECT SUM(b.score * b.score) FROM "Ballots" b
             WHERE b.voter = u.username) as "creditsUsed"
       FROM "Users" u
-    WHERE u.optout = false ${AndFilterUser}
+    WHERE u.optout = false ${AndLikeUsername} ${AndEqualUsername}
     ORDER BY score DESC
     LIMIT ${limit}
     OFFSET ${offset}
@@ -28,10 +29,11 @@ const userQuery = ({limit = 10, offset = 0, userSearch}) => {
 
 const updateUserScore = async (username, transaction ) => {
   const score = await Ballot.sumScore(username, transaction)
-  return User.update({ score }, {
+  await User.update({ score }, {
     where: { username },
     transaction
   })
+  return score
 }
 
 const adjustCandidateScore = async ({ voter, transaction}) => {
@@ -42,6 +44,17 @@ const adjustCandidateScore = async ({ voter, transaction}) => {
 }
 
 module.exports = {
+  getUser: async (username = '') => {
+    const users = await db.query(userQuery({username}),
+    {
+      replacements: { username },
+      type: QueryTypes.SELECT
+    })
+
+    const twitter = new Twitter()
+    const profiles = await twitter.getUserProfiles(users)
+    return profiles[0]
+  },
   getTopUsers: async ({offset = 0, limit = 10} = {}) => {
     const users = await db.query(userQuery({offset, limit}),
     {
@@ -87,8 +100,9 @@ module.exports = {
     const transaction = await db.queryInterface.sequelize.transaction();
     try {
       await Ballot.save({ voter, candidate, score, transaction })
-      await updateUserScore(candidate, transaction)
+      const newScore = await updateUserScore(candidate, transaction)
       await transaction.commit();
+      return newScore
     } catch (err) {
       await transaction.rollback();
     }
