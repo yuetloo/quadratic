@@ -120,7 +120,9 @@ module.exports = {
       await transaction.commit();
       return newScore
     } catch (err) {
+      console.log('castVote error', err)
       await transaction.rollback();
+      throw err
     }
   },
   setOptout: async (username) => {
@@ -154,6 +156,7 @@ module.exports = {
     } catch (err) {
       console.log('err', err)
       await transaction.rollback();
+      throw err
     }
   }
 }
