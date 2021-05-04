@@ -1,8 +1,6 @@
 'use strict'
 
 const User = require('../queries/user');
-const { QueryTypes } = require('sequelize')
-
 
 test('setOptout should work', async () => {
   const username = 'yuetloo'
@@ -19,3 +17,10 @@ test('castVote should work', async () => {
   expect(users.length).toBe(1)
   expect(users[0].score > 6).toBe(true)
 });
+
+
+test('getUser should return twitter profile if user does not exist in table', async () => {
+  const user = await User.getUser('melindagates')
+  expect(user).toBeDefined
+  expect(user.credits).toBeGreaterThan(0)
+})

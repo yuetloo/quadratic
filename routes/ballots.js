@@ -17,7 +17,8 @@ router.post('/', requireLogin, async (req, res, next) => {
   try {
     const requiredCredits = score * score
     const user = await User.getUser(voter)
-    if( user.availableCredits < requiredCredits ) {
+    const availableCredits = user.credits || 0
+    if( availableCredits < requiredCredits ) {
       throw new Error('Not enough credits')
     }
     const newScore = await User.castVote({ voter, candidate, score })

@@ -51,6 +51,10 @@ module.exports = {
       type: QueryTypes.SELECT
     })
 
+    if( users.length === 0 ) {
+      users.push({ username })
+    }
+
     const twitter = new Twitter()
     const profiles = await twitter.getUserProfiles(users)
     return profiles[0]
