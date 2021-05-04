@@ -100,6 +100,9 @@ module.exports = {
     return twitter.getUserProfiles(users)
   },
   filterOptout: async (users) => {
+    if(!users || users.length === 0 )
+      return []
+
     const usernames = users.map(u => u.username)
     const result = await User.findAll({
       attributes: [ "username" ],
@@ -109,6 +112,11 @@ module.exports = {
       },
       raw: true
     })
+
+    if( result.length === 0 ) {
+      return users
+    }
+
     const optoutUsers = new Set(result)
     return users.filter(u => !optoutUsers.has(u.username))
   },

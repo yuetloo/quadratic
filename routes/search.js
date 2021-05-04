@@ -16,7 +16,16 @@ router.get('/:username', async (req, res, next) => {
         const twitterUsers = await twitter.searchUsers(username, {
           count: limit - users.length,
           page: page++ })
-        const filtered = await User.filterOptout(twitterUsers)
+
+        if( !twitterUsers || twitterUsers.length === 0 ) break
+
+        const userLookup = new Set(users.map(u => u.username))
+        const uniqueUsers = twitterUsers.filter( u => !userLookup.has(u.username))
+
+        // no more unique users
+        if( uniqueUsers.length === 0 ) break
+
+        const filtered = await User.filterOptout(uniqueUsers)
         users.push(...filtered)
       }
       
