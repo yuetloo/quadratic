@@ -16,7 +16,7 @@ router.post('/', requireLogin, async (req, res, next) => {
 
   try {
     const twitter = new Twitter({ accessTokenKey, accessTokenSecret })
-    const tweet = await twitter.postTweet(status)
+    await twitter.postTweet(status)
     res.send({ success: true })
   } catch (e) {
     console.log('tweet error', e)

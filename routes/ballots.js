@@ -3,18 +3,32 @@ const { requireLogin } = require('../middleware/session');
 const router = express.Router();
 const Ballot = require('../queries/ballot')
 const User = require('../queries/user')
-const Twitter = require('../utils/twitter')
 
+function validate( req, res, next ) {
+  const { candidate, score } = req.body
+  if( !candidate ) {
+    throw new createError(400, 'Missing candidate')
+  }
+  if( !score ) {
+    throw new createError(400, 'Missing score')
+  }
+  next()
+}
 
 /*
  * POST /ballots
  * 
 */
-router.post('/', requireLogin, async (req, res, next) => {
+router.post('/', requireLogin, validate, async (req, res, next) => {
   const { username: voter } = req.auth
   const { candidate, score } = req.body
   
   try {
+
+    if( !candidate ) {
+      throw new Error()
+    }
+
     const requiredCredits = score * score
     const user = await User.getUser(voter)
     const availableCredits = user.credits || 0
