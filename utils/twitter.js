@@ -51,6 +51,16 @@ const buildUserProfile = (users, details) => {
 
   const profiles = users.map(u => {
     const extra = lut.get(u.username)
+    if(!extra) {
+      return {
+        username: u.username,
+        name: '',
+        profileUrl: '',
+        rank: u.rank,
+        score: u.score,
+        credits: 0
+      }
+    }
     return {
       username: u.username,
       name: extra.name,
