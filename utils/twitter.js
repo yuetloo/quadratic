@@ -54,8 +54,8 @@ const buildUserProfile = (users, details) => {
     if(!extra) {
       return {
         username: u.username,
-        name: '',
-        profileUrl: '',
+        name: u.username,
+        profileUrl: 'https://raw.githubusercontent.com/yuetloo/quadratic/main/public/question-circle-solid.svg',
         rank: u.rank,
         score: u.score,
         credits: 0
