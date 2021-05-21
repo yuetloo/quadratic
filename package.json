@@ -11,9 +11,6 @@
     "dev": "nodemon ./bin/www",
     "test": "jest"
   },
-  "engines": {
-    "node": "v15.12.x"
-  },
   "dependencies": {
     "@ethersproject/random": "^5.1.0",
     "@ethersproject/sha2": "^5.1.0",
