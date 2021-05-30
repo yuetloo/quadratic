@@ -15,9 +15,13 @@ async function validate(req, res, next) {
   }
 
   const twitter = new Twitter()
-  const profile = await twitter.getUserProfile({ username: candidate })
-  if (!profile) {
-    next(createError(400, 'Candidate is invalid twitter user'))
+  try {
+    const profile = await twitter.getUserProfile({ username: candidate })
+    if (!profile) {
+      next(createError(400, 'Candidate is invalid twitter user'))
+    }  
+  } catch (e) {
+    next(createError(400, 'Failed to get candidate profile from twitter'))
   }
   next()
 }
