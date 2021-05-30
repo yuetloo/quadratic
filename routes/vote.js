@@ -8,16 +8,16 @@ const Twitter = require('../utils/twitter')
 async function validate(req, res, next) {
   const { candidate, score } = req.body
   if (!candidate) {
-    throw new createError(400, 'Missing candidate')
+    next(createError(400, 'Missing candidate'))
   }
   if (!score) {
-    throw new createError(400, 'Missing score')
+    next(createError(400, 'Missing score'))
   }
 
   const twitter = new Twitter()
   const profile = await twitter.getUserProfile({ username: candidate })
   if (!profile) {
-    throw new createError(400, 'Candidate is invalid twitter user')
+    next(createError(400, 'Candidate is invalid twitter user'))
   }
   next()
 }
