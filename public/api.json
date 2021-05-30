@@ -143,6 +143,7 @@
         "tags": ["vote"],
         "summary": "Cast a vote",
         "description": "",
+        "consumes": ["application/json", "application/x-www-form-urlencoded"],
         "produces": ["application/json"],
         "parameters": [
           {
@@ -169,6 +170,7 @@
         "tags": ["tweet"],
         "summary": "Make a tweet",
         "description": "",
+        "consumes": ["application/json", "application/x-www-form-urlencoded"],
         "produces": ["application/json"],
         "parameters": [
           {
