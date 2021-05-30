@@ -21,7 +21,7 @@ async function validate(req) {
       throw new createError(400, 'Candidate is invalid twitter user')
     }
   } catch (e) {
-    throw new createError(400, 'Failed to get candidate profile from twitter')
+    throw new createError(400, e.message)
   }
 }
 
