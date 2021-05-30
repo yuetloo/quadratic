@@ -7,7 +7,7 @@
     "migrate:undo": "sequelize-cli db:migrate:undo",
     "seed": "sequelize-cli db:seed",
     "seed:undo": "sequelize-cli db:seed:undo",
-    "start": "pm2 start ./bin/www",
+    "start": "node ./bin/www",
     "restart": "pm2 restart ./bin/www",
     "stop": "pm2 stop ./bin/www",
     "dev": "nodemon ./bin/www",
