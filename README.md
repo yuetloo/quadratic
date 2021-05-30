@@ -1,16 +1,35 @@
-# Twitter API
+# Quadratic Trust Backend API
 
 live demo:
 https://quadratic-trust.herokuapp.com/
 
+# Dependency
+* Node
+* Postgres
+* Twitter developer account
+
 # API
 
-1. /users
+1. /api/users
    - list of top 10 users for leaderboard
-2. /users/:username
+2. /api/users/:username
    - user profile - vistor page
-3. /search/:str
+3. /api/search/:str
    - for autocomplete search
+4. POST /api/login
+   - login to twitter account
+5. /api/logout
+   - logout from twitter account
+6. GET /api/ballots?voter=:username
+   - details of votes received and gave out
+7. POST /api/optout
+   - optout of the game
+8. POST /api/tweet
+   - tweet a message
+   - body parameters: message
+9. POST /api/vote
+   - cast a vote
+   - body parameters: candidate, score
 
 # Setup
 

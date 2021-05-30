@@ -25,6 +25,7 @@ const logoutRouter = require('./routes/logout')
 const tweetRouter = require('./routes/tweet')
 const ballotsRouter = require('./routes/ballots');
 const optoutRouter = require('./routes/optout')
+const voteRouter = require('./routes/vote')
 
 const app = express();
 
@@ -41,14 +42,15 @@ app.use(session({
 }));
 app.use(verifySession);
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/search', searchRouter);
-app.use('/login', loginRouter);
-app.use('/logout', logoutRouter);
-app.use('/tweet', tweetRouter);
-app.use('/ballots', ballotsRouter)
-app.use('/optout', optoutRouter)
+app.use('/api', indexRouter)
+app.use('/api/users', usersRouter)
+app.use('/api/search', searchRouter)
+app.use('/api/login', loginRouter)
+app.use('/api/logout', logoutRouter)
+app.use('/api/tweet', tweetRouter)
+app.use('/api/ballots', ballotsRouter)
+app.use('/api/vote', voteRouter)
+app.use('/api/optout', optoutRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -56,9 +58,10 @@ app.use(function(req, res, next) {
 });
 
 // error handler
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.send({error: { status: res.status, message: err.message }});
-});
+app.use(function (err, req, res, next) {
+  const status = err.status || 500
+  res.status(status)
+  res.json({ error: { status, message: err.message } })
+})
 
 module.exports = app;
