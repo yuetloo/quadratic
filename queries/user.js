@@ -9,15 +9,14 @@ const { User } = db.models
 const Ballot = require('./ballot')
 
 
-const userQuery = ({limit = 10, offset = 0, userSearch, username}) => {
-  const LikeUsername = userSearch ? `username ILIKE '%${userSearch}%'` : ''
-  const EqualUsername = username
-    ? `${LikeUsername ? 'AND ' : ''}username = :username`
-    : ''
-
-  const WhereClause = `${
-    userSearch ? 'WHERE' : ''
-  } ${LikeUsername} ${EqualUsername}`
+const userQuery = ({ limit = 10, offset = 0, userSearch, username }) => {
+  const WhereClause = ''
+  if (userSearch) {
+    WhereClause = `WHERE username ILIKE '%${userSearch}%'`
+  }
+  if (username) {
+    WhereClause = 'WHERE username = :username'
+  }
 
   return `
     WITH cte AS(
