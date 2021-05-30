@@ -73,7 +73,10 @@ https://quadratic-trust.herokuapp.com/
       https://devcenter.heroku.com/articles/getting-started-with-nodejs#set-up
 
       ```
+          # new project
           heroku create
+          # add existing heroku project
+          heroku git:remote -a <projectname>
           git push heroku main
       ```
 
