@@ -34,7 +34,7 @@ router.post('/', requireLogin, async (req, res, next) => {
   const { candidate, score } = req.body
 
   try {
-    validate(req)
+    await validate(req)
     const requiredCredits = score * score
     console.log('voter', voter)
     const user = await User.getUser(voter)
