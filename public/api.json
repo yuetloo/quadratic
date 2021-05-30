@@ -147,15 +147,15 @@
         "produces": ["application/json"],
         "parameters": [
           {
-            "in": "candidate",
-            "name": "body",
+            "in": "body",
+            "name": "candidate",
             "description": "The candidate to vote for",
             "required": true,
             "type": "string"
           },
           {
-            "in": "score",
-            "name": "body",
+            "in": "body",
+            "name": "score",
             "description": "The number of vote credit to give to the candidate",
             "required": true,
             "type": "integer"
