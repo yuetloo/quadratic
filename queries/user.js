@@ -10,13 +10,11 @@ const Ballot = require('./ballot')
 
 
 const userQuery = ({ limit = 10, offset = 0, userSearch, username }) => {
-  const WhereClause = ''
-  if (userSearch) {
-    WhereClause = `WHERE username ILIKE '%${userSearch}%'`
-  }
-  if (username) {
-    WhereClause = 'WHERE username = :username'
-  }
+  const WhereClause = userSearch
+    ? `WHERE username ILIKE '%${userSearch}%'`
+    : username
+    ? 'WHERE username = :username'
+    : ''
 
   return `
     WITH cte AS(
