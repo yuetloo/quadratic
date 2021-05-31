@@ -205,7 +205,7 @@
     "app_auth": {
       "type": "oauth2",
       "authorizationUrl": "https://quadratic-trust.herokuapp.com/api/login",
-      "flow": "authorizationCode",
+      "flow": "authorizationCode"
     }
   },
   "definitions": {
