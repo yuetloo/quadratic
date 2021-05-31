@@ -9,7 +9,7 @@ const { User } = db.models
 const Ballot = require('./ballot')
 
 
-const userQuery = ({ limit = 10, offset = 0, where }) => {
+const userQuery = ({ limit = 10, offset = 0, where = '' }) => {
   return `
     WITH cte AS(
       SELECT
