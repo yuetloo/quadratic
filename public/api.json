@@ -143,18 +143,17 @@
         "tags": ["vote"],
         "summary": "Cast a vote",
         "description": "",
-        "consumes": ["application/json", "application/x-www-form-urlencoded"],
         "produces": ["application/json"],
         "parameters": [
           {
-            "in": "body",
+            "in": "formData",
             "name": "candidate",
             "description": "The candidate to vote for",
             "required": true,
             "type": "string"
           },
           {
-            "in": "body",
+            "in": "formData",
             "name": "score",
             "description": "The number of vote credit to give to the candidate",
             "required": true,
@@ -170,12 +169,11 @@
         "tags": ["tweet"],
         "summary": "Make a tweet",
         "description": "",
-        "consumes": ["application/json", "application/x-www-form-urlencoded"],
         "produces": ["application/json"],
         "parameters": [
           {
             "name": "message",
-            "in": "body",
+            "in": "formData",
             "description": "The message to tweet",
             "required": true,
             "type": "string"
