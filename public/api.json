@@ -206,9 +206,6 @@
       "type": "oauth2",
       "authorizationUrl": "https://quadratic-trust.herokuapp.com/api/login",
       "flow": "authorizationCode",
-      "scopes": {
-        "write": "write operation"
-      }
     }
   },
   "definitions": {
